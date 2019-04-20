@@ -13,6 +13,11 @@ from pyroute2 import IPRoute
 from pyroute2.netlink.exceptions import NetlinkError
 from typing import Mapping, Sequence
 
+SCOPE_MAP = {
+    0: "global",
+    253: "link",
+    254: "host"
+}
 
 # noinspection PyMethodMayBeStatic
 class WaybarIpAddr:
@@ -94,8 +99,15 @@ class WaybarIpAddr:
 
             addr = addrinfo.get_attr('IFA_ADDRESS')
             prefixlen = addrinfo['prefixlen']
+            scope = addrinfo['scope']
+            family = "inet4" if addrinfo['family'] == 2 else "inet6"
 
-            ret[index].append("{}/{}".format(addr, prefixlen))
+            addr_out = "{}/{}".format(addr, prefixlen)
+
+            if scope in SCOPE_MAP and (family == "inet6" or SCOPE_MAP[scope] != "global"):
+                addr_out = "{} ({})".format(addr_out, SCOPE_MAP[scope])
+
+            ret[index].append(addr_out)
 
         return ret
 
@@ -153,7 +165,7 @@ class WaybarIpAddr:
                 classes.append("vpn")
 
             tooltip = "Address{es}: {addrs}\nInterface: {iface}".format(
-                addrs=",\n           ".join(ifaddrs),
+                addrs="\n           ".join(ifaddrs),
                 iface=ifname,
                 es="es" if len(ifaddrs) > 1 else ""
             )
