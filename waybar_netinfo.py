@@ -40,8 +40,10 @@ class WaybarIpAddr:
             icon = "🔐"
         elif "wireless" in con.Type:
             icon = ""
-        elif "gsm" in con.Type:
+        elif con.Type == "gsm":
             icon = "📶"
+        elif con.Type == "wireguard":
+            icon = "🐉"
         else:
             icon = ""
 
