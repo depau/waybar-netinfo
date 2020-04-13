@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -fPIC -I/usr/include/python3.7m  -lpython3.7m
+CFLAGS = -fPIC -I/usr/include/python3.8  -lpython3.8
 CYTHON  = cython
 
 all: waybar_netinfo
